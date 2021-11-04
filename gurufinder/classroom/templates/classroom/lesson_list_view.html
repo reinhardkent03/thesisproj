@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+  <div class="container pb-5">
+    <section id="best-features" class="text-center">
+        <h2 class="mb-5 mt-5 font-weight-bold" style="color:#ff5722;">Dive Deeper</h2>
+        <!-- class row for description-->
+        <div class="row d-flex justify-content-center mb-4">
+          <!-- class column -->
+          <div class="col-md-8 mb-5">
+            <p class="grey-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi voluptate hic provident nulla repellat facere esse molestiae ipsa labore porro minima quam quaerat rem, natus repudiandae debitis est sit pariatur.</p>
+          </div>
+        </div>
+        <!-- class row2 for cards -->
+        <div class="row d-flex justify-content-center mb-3">
+          {% if subjects.lessons.all|length > 0 %}
+          {% for lesson in subjects.lessons.all %}
+          <div class="col-sm-4 mb-4 my-3">
+            <div class="card box-shadow-hover">
+              <div class="card-body">
+                {% if lesson.completed %}
+                <h5 class="card-title">Chapter-{{lesson.position}}: {{lesson.name}}(Completed)</h5>
+                {% elif lesson.completed == False %}
+                <h5 class="card-title">Chapter-{{lesson.position}}: {{lesson.name}}</h5>
+                {% endif %}
+                            <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+                <a href="{% url 'classroom:lesson_detail' slug=lesson.slug subject=subjects.slug classroom=lesson.Classroom.slug %}" >
+                  <button type="button" class="button-les"><span>Get Lectures</span></button>
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% elif subjects.lessons.all|length == 0 and user.is_student %}
+          <div class=" text-center">
+                <h1 class="display-6">You have no lessons created currently!</h1>
+            </div>
+          {% endif %}
+        </div>
+      <div class="row d-flex justify-content-center mb-3">
+        {% if user.tutor_profile.is_validated or user.is_superuser %}
+          <a href="{% url 'classroom:lesson_create' classroom=subjects.classroom.slug slug=subjects.slug %}"><button type="button" class="btn btn-success btn-lg btn-bloc" > Add new Lesson </button> </a>
+        {% endif %}
+      </div>
+    </section>
+  </div>
+{% endblock %}

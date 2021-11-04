@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+             <div>
+               <h1 class="display-6 fw-bold text-center pt-5" style="color:#ff5722;">My Profile</h1>
+           </div>
+	   <div class="container mt-4 pb-5" style="float:right">
+            <div class="row gutters" >
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="card h-100">
+                <div class="card-body" >
+                    <div class="account-settings">
+                        <div class="user-profile">
+                            <div class="user-avatar pt-4">
+                                <img src="{{ user.image.url }}" alt="{{ user.first_name }}">
+                            </div>
+                            <h5 class="user-name">{{ user.first_name|capfirst }} {{ user.last_name|capfirst }}</h5>
+                            <h6 class="user-email">{{ user.email }}</h6>
+                        </div>
+                        {% if user.is_tutor %}
+                            <div class="about">
+                                <h5>Profile Headline</h5>
+                                <h6><p>{{ user.tutor_profile.profile_headline }}</p></h6>
+                                <p></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                 <div class="col-md-8">
+                      <div class="card mb-3">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">First Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.first_name }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Last Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.last_name }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Email</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.email }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Phone</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              {{ user.phone_number }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Address</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.current_address }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-12">
+                                <!-- Default switch -->
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" id="profile_visible" name="profile visibility" onclick="cal();" />
+                                  <label class="form-check-label" for="profile_visible">Profile Visibility</label>
+                                </div>
+                                <a class="btn btn-warning mt-4  "  href="{% url 'accounts:profile_update' user.username %}">Edit</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                 </div>
+            </div>
+            </div>
+	</div>
+<!--prevent footer from overflowing -->
+  <div>
+  </div>
+{% endblock %}
