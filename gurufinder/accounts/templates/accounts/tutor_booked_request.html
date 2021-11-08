@@ -6,7 +6,7 @@
 {% block content %}
     <div class="container pb-5">
         <h2 class="display-7  pt-5 pb-4" style="color:#ff5722;">Book Requests</h2>
-           <div class="border p-4" style="float:right;">
+           <!--<div class="border p-4" style="float:right;">
                <h3 >Our Sidebar</h3>
                <p class="text-muted">Lorem ipsum dolor sit amet consectetur.</p>
                <ul class="list-group">
@@ -15,26 +15,26 @@
                    <li class="list-group-item list-group-item-light">Calendars</li>
                    <li class="list-group-item list-group-item-light">etc</li>
                </ul>
-           </div>
+           </div>-->
         {% if bookings and user.id|book_counter %}
             {% for book in bookings %}
                 {% if book and book.tutor_id.user == user and book.on_session == False  %}
-                    <div class="border card box-shadow-hover mb-3" style="max-width: 750px; border-radius">
-                      <div class="row g-0">
-                        <div class="col-md-2">
-                          <img src="{{ book.student_id.user.image.url }}" class="article-img" alt="{{ book.student_id.user.first_name }}">
-                        </div>
-                        <div class="col-md-10">
-                          <div class="card-body">
-                            <h5 class="card-title"><a class="text-dark" href="#" style="text-decoration: none;">Name: {{ book.student_id.user.first_name|capfirst }} {{ book.student_id.user.last_name|capfirst }}</a></h5>
-                            <h5 class="text-primary"><a class="text-primary" href="#" style="text-decoration: none">Subject: {{ book.subject|capfirst }}</a></h5>
-                              {% if book.subject|add:book.student_msg|length > 255 %}
+                        <div class="border card box-shadow-hover mb-3" style="max-width: 750px; border-radius">
+                          <div class="row g-0">
+                            <div class="col-md-2">
+                                <img src="{{ book.student_id.user.image.url }}" alt="{{ book.student_id.user.first_name }}">
+                            </div>
+                            <div class="col-md-10">
+                              <div class="card-body">
+                                <h5 class="card-title"><a class="text-dark" href="#" style="text-decoration: none;">Name: {{ book.student_id.user.first_name|capfirst }} {{ book.student_id.user.last_name|capfirst }}</a></h5>
+                                <h5 class="text-primary"><a class="text-primary" href="#" style="text-decoration: none">Subject: {{ book.subject|capfirst }}</a></h5>
+                                    {% if book.subject|add:book.student_msg|length > 255 %}
                                 <h6 class="text-muted">{{ book.student_msg|truncatechars:260 }}<a class="text-primary" href="#" style="text-decoration: none;">read more</a></h6>
-                              {% else %}
+                                  {% else %}
                                 <h6 class="text-muted mb-3"><a class="text-muted" href="#" style="text-decoration: none;">{{ book.student_msg|capfirst }}</a></h6>
-                              {% endif %}
+                                  {% endif %}
                                 {% ratings book.student_id %}
-                              <div class="mt-2">
+                                  <div class="mt-2">
                                   <form method="POST" action="{% url 'accounts:accept_request' book.id %}">
                                       {% csrf_token %}
                                           <button type="submit" class="btn btn-success mt-2">
@@ -45,10 +45,11 @@
                                         </a>
                                   </form>
                               </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
+
                 {% endif %}
             {% endfor %}
         {% else %}

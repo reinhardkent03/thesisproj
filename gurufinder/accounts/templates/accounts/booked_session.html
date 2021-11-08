@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="container pb-5">
-        <div class="px-4 py-5 my-5 text-center">
+        <div class="pt-5 pb-5 text-center">
             <h1 class="display-5 fw-bold" style="color:#ff5722;">Your Booked Sessions</h1>
         </div>
         {% if user.is_tutor and user.tutor_profile.has_bookings %}
@@ -72,4 +72,9 @@
             </div>
         {% endif %}
     </div>
+<div class="pb-5"></div>
+<div class="pb-5"></div>
+
+<div class="pb-5"></div>
+
 {% endblock content %}

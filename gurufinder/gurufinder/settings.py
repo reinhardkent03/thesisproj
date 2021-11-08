@@ -32,6 +32,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'module',
+    'page',
+    'quiz',
+    'assignment',
+    'question',
+    'completion',
     'accounts',
     'classroom',
     'crispy_forms',
@@ -45,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'django_htmx',
     'multiselectfield',
     'star_ratings',

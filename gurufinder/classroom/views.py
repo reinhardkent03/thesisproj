@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView, FormView
-from .models import Classroom, Subject, Lesson, TimeSlots
+from .models import Classroom, Subject, Lesson, TimeSlots, Grade
 from django.urls import reverse_lazy
 from .forms import CommentForm, ReplyForm, LessonForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.contrib.auth.decorators import login_required
 
 
 class ClassroomListView(ListView):
@@ -12,13 +13,13 @@ class ClassroomListView(ListView):
     template_name = 'classroom/classroom_list_view.html'
 
 
-class SubjectListView(DetailView):
-    context_object_name = 'classrooms'
-    extra_context = {
-        'slots': TimeSlots.objects.all()
-    }
-    model = Classroom
-    template_name = 'classroom/subject_list_view.html'
+# class SubjectListView(DetailView):
+#     context_object_name = 'classrooms'
+#     extra_context = {
+#         'slots': TimeSlots.objects.all()
+#     }
+#     model = Classroom
+#     template_name = 'classroom/subject_list_view.html'
 
 
 class LessonListView(DetailView):
@@ -156,5 +157,74 @@ def lesson_completed(request, **kwargs):
 #
 #     return render(request, 'classroom/lesson_detail_view.html')
 
+class SubjectListView(DetailView):
+    context_object_name = 'classrooms'
+    extra_context = {
+        'slots': TimeSlots.objects.all()
+    }
+    model = Classroom
+    template_name = 'classroom/subject_list_view.html'
 
 
+@login_required
+def CourseDetail(request, **kwargs):
+	user = request.user
+	subject = Subject.objects.get(id=kwargs.get('subject_id'))
+
+	context = {
+		'subject': subject,
+	}
+
+	return render(request, 'classroom/course.html', context)
+
+
+def Submissions(request, **kwargs):
+    user = request.user
+    subject_id = kwargs.get('subject_id')
+    subject = Subject.objects.get(id=subject_id)
+    grades = Grade.objects.filter(subject=subject, submission__user=user)
+    context = {
+		'grades': grades,
+		'subject': subject
+	}
+    return render(request, 'classroom/submissions.html', context)
+
+
+def StudentSubmissions(request, **kwargs):
+    user = request.user
+    subject_id = kwargs.get('subject_id')
+    subject = Subject.objects.get(id=subject_id)
+    if user != subject.classroom.bookings.tutor_id.user:
+	    return HttpResponseForbidden()
+    else:
+        grades = Grade.objects.filter(subject=subject)
+        context = {
+			'subject': subject,
+			'grades': grades,
+        }
+    return render(request,'classroom/studentgrades.html', context)
+
+
+def GradeSubmission(request, **kwargs):
+    user = request.user
+    grade_id = kwargs.get('grade_id')
+    subject_id = kwargs.get('subject_id')
+    subject = Subject.objects.get(id=subject_id)
+    grade = Grade.objects.get(id=grade_id)
+
+    if user != subject.classroom.bookings.tutor_id.user:
+	    return HttpResponseForbidden()
+    else:
+	    if request.method == 'POST':
+		    points = request.POST.get('points')
+		    grade.points = points
+		    grade.status = 'graded'
+		    grade.graded_by = user
+		    grade.save()
+		    return redirect('classroom:student-submissions', slug=subject.slug, subject_id=subject.id)
+    context = {
+		'subject': subject,
+		'grade': grade,
+	}
+
+    return render(request, 'classroom/gradesubmission.html', context)

@@ -63,7 +63,7 @@ class TutorProfile(models.Model):
             ('Saturday', 'Saturday'),
             ('Sunday', 'Sunday'),)
 
-    LANG = (('Javascript', 'Javascript'),
+    LANG = (('JavaScript', 'JavaScript'),
             ('Python', 'Python'),
             ('Swift', 'Swift'),
             ('Java', 'Java'),
@@ -104,7 +104,7 @@ class Application(models.Model):
 
 
 class Bookings(models.Model):
-    SUB_CHOICES = (('Javascript', 'Javascript'),
+    SUB_CHOICES = (('JavaScript', 'JavaScript'),
                    ('Python', 'Python'),
                    ('Swift', 'Swift'),
                    ('Java', 'Java'),
@@ -122,7 +122,7 @@ class Bookings(models.Model):
     frequency = models.CharField(max_length=10, choices=SESSION, default='0')
     student_id = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
     tutor_id = models.ForeignKey(TutorProfile, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=10, choices=SUB_CHOICES, default='Javascript')
+    subject = models.CharField(max_length=10, choices=SUB_CHOICES, default='JavaScript')
     student_msg = models.TextField(max_length=1000, null=True, blank=True)
 
     class Meta:

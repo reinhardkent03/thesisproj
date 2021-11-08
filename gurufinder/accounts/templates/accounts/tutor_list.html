@@ -22,7 +22,7 @@
                     <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                 </div>
             </form>
-           <div class="border p-4" style="float:right;">
+          <!-- <div class="border p-4" style="float:right;">
                <h3>Our Sidebar</h3>
                <p class="text-muted">Lorem ipsum dolor sit amet consectetur.</p>
                <ul class="list-group">
@@ -31,26 +31,33 @@
                    <li class="list-group-item list-group-item-light">Calendars</li>
                    <li class="list-group-item list-group-item-light">etc</li>
                </ul>
-           </div>
+           </div>-->
         {% for tutor in tutors %}
             {% if tutor.user.is_tutor and tutor.is_validated %}
-                <div class="border card box-shadow-hover mb-3" style="max-width: 750px; border-radius">
+                <div class="border card box-shadow-hover mb-3">
                   <div class="row g-0">
                     <div class="col-md-2">
                       <img src="{{ tutor.user.image.url }}" class="article-img" alt="{{ tutor.user.first_name }}">
                     </div>
-                    <div class="col-md-10">
-                      <div class="card-body">
-                        <h5 class="card-title"><a class="text-dark" href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">{{ tutor.user.first_name|capfirst }} {{ tutor.user.last_name|capfirst }}</a></h5>
-                        <h5 class="text-primary"><a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none">{{ tutor.profile_headline|capfirst }}</a></h5>
+                    <div class="col-md-7">
+                      <div class="card-body vl">
+                        <h7  class="card-title"><a class="text-dark" href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">{{ tutor.user.first_name|capfirst }} {{ tutor.user.last_name|capfirst }}</a></h7>
+                        <h6 class="text-primary"><a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none">{{ tutor.profile_headline|capfirst }}</a></h6>
                           {% if tutor.profile_headline|add:tutor.bio|length > 255 %}
-                            <h6 class="text-muted">{{ tutor.bio|truncatechars:260 }}<a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">read more</a></h6>
+                            <h7 class="text-muted">{{ tutor.bio|truncatechars:260 }}<a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">read more</a></h7>
                           {% else %}
                             <h6 class="text-muted"><a href="{% url 'tutor_detail' tutor.user.id %}" style="text-decoration: none;">{{ tutor.bio|capfirst }}</a></h6>
                           {% endif %}
-                          {% ratings tutor %}
                       </div>
                     </div>
+                       <div class="col-md-3 text-center pt-3">
+                           <div class="card-body">
+                               <div class="pb-2">₱{{ tutor.hourly_rate }}/<h7><b>hour</b></h7></div>
+
+                            {% ratings tutor %}
+
+                           </div>
+                      </div>
                   </div>
                 </div>
             {% endif %}

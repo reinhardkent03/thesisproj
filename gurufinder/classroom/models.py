@@ -3,6 +3,12 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from accounts.models import Bookings
 import os
+
+from module.models import Module
+from assignment.models import Submission
+from question.models import Question
+
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
 # from django.conf import settings
@@ -38,6 +44,8 @@ class Subject(models.Model):
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, blank=True, related_name='subjects')
     image = models.ImageField(upload_to=save_subject_image, blank=True, verbose_name='Subject Image')
     description = models.TextField(max_length=500, blank=True)
+    modules = models.ManyToManyField(Module, blank=True)
+    questions = models.ManyToManyField(Question, blank=True)
 
     def __str__(self):
         return f'{self.classroom}-{self.name}'
@@ -45,6 +53,59 @@ class Subject(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.subject_id)
         super().save(*args, **kwargs)
+
+
+class Grade(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('graded', 'Graded'),
+    )
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
+    points = models.PositiveIntegerField(default=0)
+    graded_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    status = models.CharField(choices=STATUS_CHOICES, default='pending', max_length=10, verbose_name='Status')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def save_lesson_files(instance, filename):

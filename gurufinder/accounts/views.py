@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.html import format_html
 import threading
 from classroom.models import Classroom, Subject, Lesson
+from question.models import Question
 
 
 def index(request):
@@ -451,16 +452,20 @@ def accept_request(request, id):
         """
         create instance of subject and assign to classroom
         """
-        subject_ins = Subject(subject_id=f'({obj.id}) {obj.subject}',
+        questions = Question.objects.all()
+        subject_ins = Subject.objects.create(subject_id=f'({obj.id}) {obj.subject}',
                               name=f'{obj.subject}',
                               classroom=Classroom.objects.get(id=classroom.id),
                               image=ImageFile(open(f'media/{obj.subject}.png', 'rb')),
-                              description=lang_description.get(obj.subject))
+                              description=lang_description.get(obj.subject)
+                              )
+        subject_ins.questions.add(*questions)
         subject_ins.save()
+
 
         if session.subject == 'Python':
             create_lesson(request.user, obj.subject, classroom, session.id, subject_ins.id)
-        if session.subject == 'Javascript':
+        if session.subject == 'JavaScript':
             create_lesson(request.user, obj.subject, classroom, session.id, subject_ins.id)
 
 
@@ -550,7 +555,7 @@ class ProfileUpdateView(LoginRequiredMixin,UpdateView):
 
     def get_success_url(self):
         self.object = self.get_object()
-        return reverse_lazy('accounts:profile')
+        return reverse_lazy('accounts:profile_update', self.request.user.username)
 
 
 @admin.register(Application)
@@ -748,7 +753,7 @@ def javascript(user, subject, classroom, booking_id, subject_id):
                      Classroom=Classroom.objects.get(id=classroom.id),
                      created_by=user,
                      subject=Subject.objects.get(id=subject_id),
-                     name=f'Javascript Fundamentals',
+                     name=f'JavaScript Fundamentals',
                      position=1,
                      slug=f'{booking_id}-javascript-fundamentals',
                      video=File(open('media/intro_vid.mp4', 'rb'))
@@ -809,7 +814,7 @@ def javascript(user, subject, classroom, booking_id, subject_id):
                      Classroom=Classroom.objects.get(id=classroom.id),
                      created_by=user,
                      subject=Subject.objects.get(id=subject_id),
-                     name=f'Javascript Classes',
+                     name=f'JavaScript Classes',
                      position=7,
                      slug=f'{booking_id}-javascript-classes',
                      )
