@@ -42,7 +42,7 @@
         {% for answer in question.answers.all %}
           <div class="input col-md-12">
             <label>
-              <input name="answer" type="checkbox" value="{{ answer.id }}" />
+              <input name="answer" type="checkbox" value="{{ answer.id }}" style="opacity:0%"/>
               <span>{{ answer.answer_text }}</span>
             </label>
           </div>

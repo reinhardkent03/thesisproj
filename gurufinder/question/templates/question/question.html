@@ -32,7 +32,7 @@
 
 
   <div class="section">
-    <h4 class="display-6">Questions</h4>
+    <h7 class="display-6">{{ question.title|capfirst }}</h7>
     <div class="divider mb-3 mt-4"></div>
 
     <div>
@@ -108,7 +108,7 @@
         <a href="" class="vote" vote-type="U" answer-id="{{ answer.id }}"><i class="material-icons">thumb_up</i>Up vote</a>
         <a href="" class="vote" vote-type="D" answer-id="{{ answer.id }}"><i class="material-icons">thumb_down</i>Down vote</a> 
 
-        {% if moderator == True %}
+        {% if user == question.user %}
           <a href="{% url 'classroom:mark-as-answer' slug=subject.slug subject_id=subject.id question_id=question.id answer_id=answer.id %}"><i class="material-icons">done</i>Mark as answer</a>
         {% endif %}
 

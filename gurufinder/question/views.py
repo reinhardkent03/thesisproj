@@ -52,7 +52,7 @@ def questions(request, **kwargs):
 
 def question_detail(request, **kwargs):
     user = request.user
-    moderator = False
+    # moderator = False
     question_id = kwargs.get('question_id')
     subject_id = kwargs.get('subject_id')
     subject = Subject.objects.get(id=subject_id)
@@ -63,8 +63,8 @@ def question_detail(request, **kwargs):
 
     answers = correct_answer | rest_answers
 
-    if user == subject.classroom.bookings.tutor_id.user or user == question.user:
-        moderator = True
+    # if user == subject.classroom.bookings.tutor_id.user or user == question.user:
+    #     moderator = True
 
     if request.method == 'POST':
         form = AnswerForm(request.POST)
@@ -79,7 +79,7 @@ def question_detail(request, **kwargs):
         'answers': answers,
         'subject': subject,
         'form': form,
-        'moderator': moderator,
+        # 'moderator': moderator,
     }
     return render(request, 'question/question.html', context)
 

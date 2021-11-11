@@ -513,11 +513,14 @@ def accept_request(request, id):
                               description=lang_description.get(obj.subject)
                               )
 
-        if not session.frequency:
-            session.end_time += timedelta(hours=int(session.frequency[0]))  # due
+        subject_ins.questions.add(*questions)
+        subject_ins.save()
+
+        if int(session.frequency) == 0:
+            session.end_time += timedelta(hours=1)  # due
             session.save()
         else:
-            session.end_time += timedelta(hours=1)  # due
+            session.end_time += timedelta(hours=int(session.frequency))  # due
             session.save()
 
         print(session.frequency)

@@ -29,9 +29,9 @@
                                 <h7  class="card-title"><a class="text-dark" href="#" style="text-decoration: none;">{{ book.student_id.user.get_full_name|title }}</a></h7>
                                 <h6 class="text-primary"><a href="#" style="text-decoration: none">Subject to learn: {{ book.subject|capfirst }}</a></h6>
                                     {% if book.subject|add:book.student_msg|length > 255 %}
-                                    <h7 class="text-muted">{{ book.student_msg|truncatechars:260 }}<a href="#" style="text-decoration: none;">read more</a></h7>
+                                    <h7 class="text-muted">{{ book.student_msg|truncatechars:260 }}<a  style="text-decoration: none;">read more</a></h7>
                                   {% else %}
-                                    <h6 class="text-muted"><a href="#" style="text-decoration: none;">{{ book.student_msg|capfirst }}</a></h6>
+                                    <h6 class="text-muted"><a style="text-decoration: none;">{{ book.student_msg|capfirst }}</a></h6>
                                   {% endif %}
                                   <form method="POST" action="{% url 'accounts:accept_request' book.id %}">
                                       {% csrf_token %}
