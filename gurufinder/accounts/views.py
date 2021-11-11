@@ -1,4 +1,4 @@
-from copy import deepcopy
+from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect,  get_object_or_404
@@ -295,7 +295,7 @@ class ActiveSession(LoginRequiredMixin, ListView):
             filter_bookings = Bookings.objects.filter(tutor_id=tutor_profile, on_session=True)
             return filter_bookings
 
-        elif self.request.user.is_student:
+        if self.request.user.is_student:
             student_profile = self.request.user.student_profile
             filter_bookings = Bookings.objects.filter(student_id=student_profile, on_session=True)
             return filter_bookings
@@ -309,6 +309,8 @@ def end_session(request, id):
         if request.user.is_tutor:
             student = session.student_id.user
             tutor = request.user
+            tutor_has_bookings = len(Bookings.objects.filter(tutor_id=tutor.tutor_profile))
+            student_has_bookings = len(Bookings.objects.filter(student_id=student.student_profile))
 
             subject = 'Session ended'
             message = f'Your session with {tutor.first_name} has now ended. Thank you for choosing gurufinder!'
@@ -316,18 +318,38 @@ def end_session(request, id):
             recipient_list = [student.email]
             send_html_mail(subject, message, recipient_list, email_from)
 
-            student.student_profile.has_bookings = False
-            tutor.tutor_profile.has_bookings = False
-            student.save()
-            tutor.save()
             session.delete()
 
-            return HttpResponseRedirect(reverse('accounts:end_session_rating', kwargs={'id':session.student_id.id}))
+            if student_has_bookings >=2 and tutor_has_bookings < 2:
+                tutor.tutor_profile.has_bookings = False
+                tutor.save()
+
+                return HttpResponseRedirect(reverse('accounts:end_session_rating_student', kwargs={'id': session.student_id.id}))
+
+
+            elif tutor_has_bookings >=2 and student_has_bookings < 2:
+                student.student_profile.has_bookings = False
+                student.save()
+
+                return HttpResponseRedirect(reverse('accounts:end_session_rating_student', kwargs={'id': session.student_id.id}))
+
+            else:
+
+                student.student_profile.has_bookings = False
+                tutor.tutor_profile.has_bookings = False
+                tutor.save()
+                student.save()
+
+                return HttpResponseRedirect(reverse('accounts:end_session_rating_student', kwargs={'id': session.student_id.id}))
+
+            return HttpResponseRedirect(reverse('accounts:end_session_rating_student', kwargs={'id': session.student_id.id}))
 
 
         elif request.user.is_student:
             student = request.user
             tutor = session.tutor_id.user
+            tutor_has_bookings = len(Bookings.objects.all().filter(tutor_id=tutor.tutor_profile))
+            student_has_bookings = len(Bookings.objects.all().filter(student_id=student.student_profile))
 
             subject = 'Session ended'
             message = f'Your session with {student.first_name} has now ended. Thank you!'
@@ -335,20 +357,37 @@ def end_session(request, id):
             recipient_list = [tutor.email]
             send_html_mail(subject, message, recipient_list, email_from)
 
-            student.student_profile.has_bookings = False
-            tutor.tutor_profile.has_bookings = False
-            student.save()
-            tutor.save()
             session.delete()
 
-            print('student')
+            if student_has_bookings >= 2  and tutor_has_bookings < 2:
+                tutor.tutor_profile.has_bookings = False
+                tutor.save()
 
-            return HttpResponseRedirect(reverse_lazy('accounts:booked_sessions'))
+                return HttpResponseRedirect(reverse('accounts:end_session_rating_tutor', kwargs={'id': session.tutor_id.id}))
+
+
+            elif tutor_has_bookings >= 2 and student_has_bookings < 2:
+                student.student_profile.has_bookings = False
+                student.save()
+
+                return HttpResponseRedirect(reverse('accounts:end_session_rating_tutor', kwargs={'id': session.tutor_id.id}))
+
+
+            else:
+
+                student.student_profile.has_bookings = False
+                tutor.tutor_profile.has_bookings = False
+                tutor.save()
+                student.save()
+
+                return HttpResponseRedirect(reverse('accounts:end_session_rating_tutor', kwargs={'id': session.tutor_id.id}))
+
+            return HttpResponseRedirect(reverse('accounts:end_session_rating_tutor', kwargs={'id': session.tutor_id.id}))
 
     return render(request, 'accounts/session_cancel.html')
 
 
-def end_session_rating(request, id):
+def end_session_rating_student(request, id):
     obj_student = get_object_or_404(StudentProfile, id=id)
 
     student = StudentProfile.objects.filter(id=id)
@@ -359,6 +398,18 @@ def end_session_rating(request, id):
                }
 
     return render(request, 'accounts/end_session_rating.html', context)
+
+def end_session_rating_tutor(request, id):
+    obj_tutor = get_object_or_404(TutorProfile, id=id)
+
+    tutor = TutorProfile.objects.filter(id=id)
+
+    context = {
+        'tutor_end_session':tutor,
+        'tutor_name':obj_tutor.user.first_name
+               }
+
+    return render(request, 'accounts/end_session_rating_tutor.html', context)
 
 
 @login_required
@@ -377,7 +428,7 @@ def deny_request(request, id):
             send_html_mail(subject,message,recipient_list,email_from)
             obj.delete()
 
-            return HttpResponseRedirect('accounts:tutor_bookings')
+            return redirect('accounts:tutor_bookings')
     else:
 
         context = {
@@ -394,7 +445,7 @@ def accept_request(request, id):
     tutor = request.user
     session = obj
     lang_description = {'Python': 'Python is an interpreted high-level general-purpose programming language.',
-                        'Javascript': 'JavaScript, often abbreviated as JS, is a programming language that conforms to the ECMAScript specification.',
+                        'JavaScript': 'JavaScript, often abbreviated as JS, is a programming language that conforms to the ECMAScript specification.',
                         'PHP': 'PHP is a general-purpose scripting language geared towards web development.',
                         'Java': 'Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible.',
                         'C#': 'C# is a general-purpose, multi-paradigm programming language encompassing static typing, strong typing, lexically scoped, imperative, declarative, functional, generic, object-oriented, and component-oriented programming disciplines.',
@@ -412,6 +463,8 @@ def accept_request(request, id):
         tutor.tutor_profile.has_bookings = True
         student.student_profile.has_bookings = True
         session.on_session = True
+        session.start_time = datetime.now()
+        session.end_time = datetime.now()
         tutor.tutor_profile.students.append(student.username) #assign as one of the tutors student
         session.save()
         tutor.save()
@@ -459,8 +512,16 @@ def accept_request(request, id):
                               image=ImageFile(open(f'media/{obj.subject}.png', 'rb')),
                               description=lang_description.get(obj.subject)
                               )
-        subject_ins.questions.add(*questions)
-        subject_ins.save()
+
+        if not session.frequency:
+            session.end_time += timedelta(hours=int(session.frequency[0]))  # due
+            session.save()
+        else:
+            session.end_time += timedelta(hours=1)  # due
+            session.save()
+
+        print(session.frequency)
+        print(session.end_time)
 
 
         if session.subject == 'Python':
@@ -567,11 +628,17 @@ class Application(admin.ModelAdmin):
 
     def confirmed(self, obj):
         url = reverse('admin:confirm_url', kwargs={'id': obj.id})
-        return format_html('<a class="button" href="{}">Confirm</a>', url)
+        self.object = self.get_object(self, obj.id)
+        tutor = self.object.user.tutor_profile.is_validated
+        if not tutor:
+            return format_html('<a class="button" href="{}">Confirm</a>', url)
 
     def denied(self, obj):
         url = reverse('admin:denied_url', kwargs={'id': obj.id})
-        return format_html('<a class="button" href="{}">Deny</a>', url)
+        self.object = self.get_object(self, obj.id)
+        tutor = self.object.user.tutor_profile.is_validated
+        if not tutor:
+            return format_html('<a class="button" href="{}">Deny</a>', url)
 
     def approved(self, obj):
         self.object = self.get_object(self, obj.id)
@@ -622,7 +689,7 @@ class Application(admin.ModelAdmin):
 def create_lesson(user, subject, classroom, booking_id, subject_id):
     if subject == 'Python':
         python(user, subject, classroom, booking_id, subject_id)
-    elif subject == 'Javascript':
+    elif subject == 'JavaScript':
         javascript(user, subject, classroom, booking_id, subject_id)
 
 
@@ -755,7 +822,7 @@ def javascript(user, subject, classroom, booking_id, subject_id):
                      subject=Subject.objects.get(id=subject_id),
                      name=f'JavaScript Fundamentals',
                      position=1,
-                     slug=f'{booking_id}-javascript-fundamentals',
+                     slug=f'{booking_id}-javaScript-fundamentals',
                      video=File(open('media/intro_vid.mp4', 'rb'))
                      )
     lesson1.save()

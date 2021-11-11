@@ -4,7 +4,7 @@
 {% block content %}
   <div role="main" class="container">
     <div class="row">
-      <div class="px-4 py-5 my-5">
+      <div class="my-5">
         <h2 class="display-5 text-center"  style="color:#ff5722;">
         Apply Now
         </h2>
@@ -16,10 +16,8 @@
               <fieldset class="form-group">
                 {{ profile_form|crispy }}
                 {{ application_form|crispy }}
-              </fieldset>
-              <div class="form-group">
                 <button class="btn btn-warning mt-4 mb-3" type="submit">Submit</button>
-              </div>
+              </fieldset>
             </form>
           </div>
         </div>

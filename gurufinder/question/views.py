@@ -9,7 +9,7 @@ from question.forms import QuestionForm, AnswerForm
 from classroom.models import Subject
 
 
-def NewStudentQuestion(request, **kwargs):
+def new_student_question(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     #subjects = Subject.objects.get(id=subject_id)
@@ -33,7 +33,7 @@ def NewStudentQuestion(request, **kwargs):
     return render(request, 'question/newquestion.html', context)
 
 
-def Questions(request, **kwargs):
+def questions(request, **kwargs):
     subject_id = kwargs.get('subject_id')
     subject = Subject.objects.get(id=subject_id)
     questions = subject.questions.all()
@@ -50,7 +50,7 @@ def Questions(request, **kwargs):
     return render(request, 'question/questions.html', context)
 
 
-def QuestionDetail(request, **kwargs):
+def question_detail(request, **kwargs):
     user = request.user
     moderator = False
     question_id = kwargs.get('question_id')
@@ -84,7 +84,7 @@ def QuestionDetail(request, **kwargs):
     return render(request, 'question/question.html', context)
 
 
-def MarkAsAnswer(request, **kwargs):
+def mark_as_answer(request, **kwargs):
     user = request.user
     answer_id = kwargs.get('answer_id')
     question_id = kwargs.get('question_id')
@@ -103,7 +103,7 @@ def MarkAsAnswer(request, **kwargs):
         return HttpResponseForbidden()
 
 
-def VoteAnswer(request, **kwargs):
+def vote_answer(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     question_id = kwargs.get('question_id')

@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from .forms import CommentForm, ReplyForm, LessonForm
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
+from completion.models import Completion
 
 
 class ClassroomListView(ListView):
@@ -27,6 +28,14 @@ class LessonListView(DetailView):
     model = Subject
     template_name = 'classroom/lesson_list_view.html'
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(LessonListView, self).get_context_data(*args, **kwargs)
+        user = self.object.classroom.bookings.student_id.user
+        subject = self.object.id
+        context['lesson_completions'] = Completion.objects.filter(user=user, subject=subject).values_list('lesson__pk', flat=True)
+
+        return context
+
 
 class LessonDetailView(DetailView, FormView):
     context_object_name = 'lessons'
@@ -37,6 +46,10 @@ class LessonDetailView(DetailView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(LessonDetailView, self).get_context_data(**kwargs)
+        subject = self.object.subject
+        lesson = self.object.id
+        context['completed'] = Completion.objects.filter(subject=subject.id, user=self.request.user, lesson=lesson).exists()
+
         if 'form' not in context:
             context['form'] = self.form_class(request=self.request)
         if 'form2' not in context:
@@ -84,6 +97,16 @@ class LessonDetailView(DetailView, FormView):
         fm.save()
         return HttpResponseRedirect(self.get_success_url())
 
+def mark_lesson_as_done(request, **kwargs):
+	user = request.user
+	subject_id = kwargs.get('subject_id')
+	lesson_id = kwargs.get('lesson_id')
+	lesson = Lesson.objects.get(id=lesson_id)
+	subject = Subject.objects.get(id=subject_id)
+	Completion.objects.create(user=user, subject=subject, lesson=lesson)
+
+	return redirect('classroom:lesson_list', slug=subject.slug, subject_id=subject_id)
+
 
 class LessonCreateView(CreateView):
     form_class = LessonForm
@@ -94,7 +117,7 @@ class LessonCreateView(CreateView):
     def get_success_url(self):
         self.object = self.get_object()
         classroom = self.object.classroom
-        return reverse_lazy('classroom:lesson_list', kwargs={'classroom': classroom.slug, 'slug': self.object.slug})
+        return reverse_lazy('classroom:lesson_list', kwargs={'slug': self.object.slug, 'subject_id': self.object.id})
 
     def form_valid(self, form, *args, **kwargs):
         self.object = self.get_object()
@@ -167,7 +190,7 @@ class SubjectListView(DetailView):
 
 
 @login_required
-def CourseDetail(request, **kwargs):
+def course_detail(request, **kwargs):
 	user = request.user
 	subject = Subject.objects.get(id=kwargs.get('subject_id'))
 
@@ -178,7 +201,7 @@ def CourseDetail(request, **kwargs):
 	return render(request, 'classroom/course.html', context)
 
 
-def Submissions(request, **kwargs):
+def submissions(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     subject = Subject.objects.get(id=subject_id)
@@ -190,7 +213,7 @@ def Submissions(request, **kwargs):
     return render(request, 'classroom/submissions.html', context)
 
 
-def StudentSubmissions(request, **kwargs):
+def student_submissions(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     subject = Subject.objects.get(id=subject_id)
@@ -205,7 +228,7 @@ def StudentSubmissions(request, **kwargs):
     return render(request,'classroom/studentgrades.html', context)
 
 
-def GradeSubmission(request, **kwargs):
+def grade_submission(request, **kwargs):
     user = request.user
     grade_id = kwargs.get('grade_id')
     subject_id = kwargs.get('subject_id')

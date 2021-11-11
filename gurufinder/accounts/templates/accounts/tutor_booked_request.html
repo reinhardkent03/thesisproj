@@ -19,22 +19,20 @@
         {% if bookings and user.id|book_counter %}
             {% for book in bookings %}
                 {% if book and book.tutor_id.user == user and book.on_session == False  %}
-                        <div class="border card box-shadow-hover mb-3" style="max-width: 750px; border-radius">
+                        <div class="border card box-shadow-hover mb-3">
                           <div class="row g-0">
                             <div class="col-md-2">
-                                <img src="{{ book.student_id.user.image.url }}" alt="{{ book.student_id.user.first_name }}">
+                              <img src="{{ book.student_id.user.image.url }}" class="article-img" alt="{{ book.student_id.user.first_name }}">
                             </div>
-                            <div class="col-md-10">
-                              <div class="card-body">
-                                <h5 class="card-title"><a class="text-dark" href="#" style="text-decoration: none;">Name: {{ book.student_id.user.first_name|capfirst }} {{ book.student_id.user.last_name|capfirst }}</a></h5>
-                                <h5 class="text-primary"><a class="text-primary" href="#" style="text-decoration: none">Subject: {{ book.subject|capfirst }}</a></h5>
+                            <div class="col-md-7">
+                              <div class="card-body vl">
+                                <h7  class="card-title"><a class="text-dark" href="#" style="text-decoration: none;">{{ book.student_id.user.get_full_name|title }}</a></h7>
+                                <h6 class="text-primary"><a href="#" style="text-decoration: none">Subject to learn: {{ book.subject|capfirst }}</a></h6>
                                     {% if book.subject|add:book.student_msg|length > 255 %}
-                                <h6 class="text-muted">{{ book.student_msg|truncatechars:260 }}<a class="text-primary" href="#" style="text-decoration: none;">read more</a></h6>
+                                    <h7 class="text-muted">{{ book.student_msg|truncatechars:260 }}<a href="#" style="text-decoration: none;">read more</a></h7>
                                   {% else %}
-                                <h6 class="text-muted mb-3"><a class="text-muted" href="#" style="text-decoration: none;">{{ book.student_msg|capfirst }}</a></h6>
+                                    <h6 class="text-muted"><a href="#" style="text-decoration: none;">{{ book.student_msg|capfirst }}</a></h6>
                                   {% endif %}
-                                {% ratings book.student_id %}
-                                  <div class="mt-2">
                                   <form method="POST" action="{% url 'accounts:accept_request' book.id %}">
                                       {% csrf_token %}
                                           <button type="submit" class="btn btn-success mt-2">
@@ -45,8 +43,14 @@
                                         </a>
                                   </form>
                               </div>
-                              </div>
                             </div>
+                               <div class="col-md-3 text-center pt-3">
+                                   <div class="card-body">
+
+                                    {% ratings book.student_id %}
+
+                                   </div>
+                              </div>
                           </div>
                         </div>
 

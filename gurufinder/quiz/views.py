@@ -8,8 +8,9 @@ from quiz.models import Answer, Question, Quizzes, Attempter, Attempt
 from module.models import Module
 from completion.models import Completion
 
+
 # Create your views here.
-def NewQuiz(request, **kwargs):
+def new_quiz(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')
@@ -37,7 +38,7 @@ def NewQuiz(request, **kwargs):
     return render(request, 'quiz/newquiz.html', context)
 
 
-def NewQuestion(request, **kwargs):
+def new_question(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')
@@ -71,7 +72,7 @@ def NewQuestion(request, **kwargs):
     return render(request, 'quiz/newquestion.html', context)
 
 
-def QuizDetail(request, **kwargs):
+def quiz_detail(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')
@@ -89,7 +90,7 @@ def QuizDetail(request, **kwargs):
     return render(request, 'quiz/quizdetail.html', context)
 
 
-def TakeQuiz(request, **kwargs):
+def take_quiz(request, **kwargs):
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')
     quiz_id = kwargs.get('quiz_id')
@@ -103,7 +104,7 @@ def TakeQuiz(request, **kwargs):
     return render(request, 'quiz/takequiz.html', context)
 
 
-def SubmitAttempt(request, **kwargs):
+def submit_attempt(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')
@@ -128,7 +129,7 @@ def SubmitAttempt(request, **kwargs):
         return redirect('classroom:modules', slug=subject.slug, subject_id=subject_id)
 
 
-def AttemptDetail(request, **kwargs):
+def attempt_detail(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')

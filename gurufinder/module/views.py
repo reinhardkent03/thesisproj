@@ -8,7 +8,7 @@ from classroom.models import Subject
 from completion.models import Completion
 # Create your views here.
 
-def NewModule(request, **kwargs):
+def new_module(request, **kwargs):
 	user = request.user
 	subject = Subject.objects.get(id=kwargs.get('subject_id'))
 	id = kwargs.get('subject_id')
@@ -37,7 +37,7 @@ def NewModule(request, **kwargs):
 
 
 
-def CourseModules(request, **kwargs):
+def course_modules(request, **kwargs):
 	user = request.user
 	subject = Subject.objects.get(id=kwargs.get('subject_id'))
 

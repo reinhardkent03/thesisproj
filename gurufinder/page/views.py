@@ -11,7 +11,7 @@ from page.forms import NewPageForm
 
 
 @login_required
-def NewPageModule(request, **kwargs):
+def new_page_module(request, **kwargs):
 	user = request.user
 	subject = Subject.objects.get(id=kwargs.get('subject_id'))
 	module = Module.objects.get(id=kwargs.get('module_id'))
@@ -48,7 +48,7 @@ def NewPageModule(request, **kwargs):
 	return render(request, 'page/newpage.html', context)
 
 
-def PageDetail(request, **kwargs):
+def page_detail(request, **kwargs):
 	subject_id = kwargs.get('subject_id')
 	module_id = kwargs.get('module_id')
 	page_id = kwargs.get('page_id')
@@ -65,7 +65,7 @@ def PageDetail(request, **kwargs):
 	}
 	return render(request, 'page/page.html', context)
 
-def MarkPageAsDone(request, **kwargs):
+def mark_page_as_done(request, **kwargs):
 	user = request.user
 	subject_id = kwargs.get('subject_id')
 	module_id = kwargs.get('module_id')

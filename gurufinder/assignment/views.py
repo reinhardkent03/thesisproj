@@ -11,7 +11,7 @@ from completion.models import Completion
 
 
 # Create your views here.
-def NewAssignment(request, **kwargs):
+def new_assignment(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')
@@ -50,7 +50,7 @@ def NewAssignment(request, **kwargs):
     return render(request, 'assignment/newassignment.html', context)
 
 
-def AssignmentDetail(request, **kwargs):
+def assignment_detail(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')
@@ -68,7 +68,7 @@ def AssignmentDetail(request, **kwargs):
     return render(request, 'assignment/assignment.html', context)
 
 
-def NewSubmission(request, **kwargs):
+def new_submission(request, **kwargs):
     user = request.user
     subject_id = kwargs.get('subject_id')
     module_id = kwargs.get('module_id')

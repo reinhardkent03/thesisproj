@@ -7,9 +7,20 @@
             <h1 class="display-6 fw-bold pt-5 pb-4" style="color:#ff5722;">Tutors</h1>
            <form class="pb-4" action="{% url 'search_language' %}" method="get">
                {% csrf_token %}
-                <div class="input-group rounded">
-                  <input style="max-width:200px" type="text" name="language" class="form-control rounded" placeholder="programming language" aria-label="Search" aria-describedby="search-addon" />
-                    <input class="form-control" list="datalistOptions" type="text" name="availability" placeholder="availability" style="max-width:200px">
+                <div class="input-group">
+                    <div class="col-3">
+                        <span class="text-muted"><small>Programming Language</small></span>
+                        <input style="max-width:200px" type="text" name="language" class="form-control rounded"  aria-label="Search" aria-describedby="search-addon" />
+                    </div>
+                    <div class="col-3">
+                        <span class="text-muted"><small>Availability</small></span>
+                        <input style="max-width:200px" class="form-control" list="datalistOptions" type="text" name="availability">
+                    </div>
+                     <div class="col- pt-4">
+                         <button type="submit" class="btn btn-primary">Search
+                        <i class="material-icons right">send</i>
+                    </button>
+                     </div>
                     <datalist id="datalistOptions">
                       <option value="Monday">
                       <option value="Tuesday">
@@ -19,7 +30,6 @@
                         <option value="Saturday">
                       <option value="Sunday">
                     </datalist>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                 </div>
             </form>
           <!-- <div class="border p-4" style="float:right;">

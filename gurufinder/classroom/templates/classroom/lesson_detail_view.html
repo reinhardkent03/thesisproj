@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container pb-5" xmlns="http://www.w3.org/1999/html">
         <section class="text-center">
-            <h2 class="my-5 font-weight-bold" style="color:#ff5722;">Lecture Details</h2>
+            <h2 class="my-5 display-6" style="color:#ff5722;">{{ lessons.name}}</h2>
             <div class="row d-flex justify-content-center mb-3">
                 <p class="blockquote-footer">Created on {{lessons.created_at}} by <cite title="Source Title">{{lessons.created_by}}</cite></p>
             </div>
@@ -20,31 +20,6 @@
             </div>
             {% else %}
             <h1><strong>Video Not Available</strong></h1>
-            {% endif %}
-            {% if lessons.completed == False and user.is_student %}
-            <div>
-                <form method="POST" action="{% url 'classroom:lesson_complete' classroom=lessons.Classroom.slug subject=lessons.subject.slug slug=lessons.slug lesson_id=lessons.id %}">
-                     {% csrf_token %}
-                    <button type="submit" name="completed" class="btn btn-primary mt-2" value="completed lesson">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                          <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
-                        </svg>
-                        MARK AS DONE
-                    </button>
-                </form>
-            </div>
-            {% elif lessons.completed == True and user.is_student %}
-             <div>
-                <form method="POST" action="{% url 'classroom:lesson_complete' classroom=lessons.Classroom.slug subject=lessons.subject.slug slug=lessons.slug lesson_id=lessons.id %}">
-                     {% csrf_token %}
-                    <button type="submit" name="not_completed" class="btn btn-primary mt-2" value="not completed">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                        </svg>
-                        MARK AS NOT COMPLETED
-                    </button>
-                </form>
-            </div>
             {% endif %}
             <!-- download cards -->
             <div class="row d-flex justify-content-center mb-3 mt-3">
@@ -99,6 +74,11 @@
             </div>
             <!-- update and delete button -->
             <div class="row d-flex justify-content-center mb-3 mt-3">
+                {% if completed != True and user.is_student %}
+                    <div class="col-lg-12 center-align pt-3">
+                        <a class="btn-large" href="{% url 'classroom:mark-lesson-as-done' classroom=lessons.Classroom.slug subject_id=lessons.subject.id lesson_id=lessons.id %}"><i class="material-icons">done</i> Mark as done</a>
+                    </div>
+                {% endif %}
                 {% if user.tutor_profile.is_validated == True or user.is_superuser %}
                 <div class="col-md-6 mb-3 text-center">
                     <a href="{% url 'classroom:lesson_update' classroom=lessons.Classroom.slug subject=lessons.subject.slug slug=lessons.slug %}" class="btn btn-warning btn-lg mr-4 btn-block">Update Lesson</a>
@@ -114,15 +94,15 @@
 
         <!-- Comments section -->
         <section >
-            <h2 class="font-weight-bold" style="color:#ff5722;">Questions And Queries</h2>
-            <h4 class="font-weight-bold" >Post your comment or question below:</h4>
+            <h2 class="display-6" style="color:#ff5722;">Questions And Queries</h2>
+            <h4 class="display-6" >Post your comment or question below:</h4>
             <br><br>
             <div class="col-md-6">
                 <form method="post">
                     <div class="form-group">
                         {% csrf_token %}
                         {{form|crispy}}
-                        <input type="submit" name="form" value="Add Comment" class="btn btn-primary btn-sm mt-2">
+                        <input type="submit" name="form" value="Add Comment" class="btn btn-primary btn-sm mt-4">
                     </div>
                  </form>
             </div>
@@ -130,15 +110,15 @@
               {% for comment in lessons.comments.all %}
               <div class="col-md-8 mt-2 mb-2">
                   <div class="media border p-3">
-                      <img src="{{ user.image.url }}" alt="{{ user.first_name }}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+                      <img src="{{ comment.author.image.url }}" alt="{{ comment.author.first_name }}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
                       <div class="media-body">
-                          <h4>{{comment.author}} <small><i>Posted on {{comment.date_added}}</i></small></h4>
+                          <h6>{{comment.author|title}} <small><i>Posted on {{comment.date_added}}</i></small></h6>
                           <p>{{comment.body}}</p>
                           {% for reply in comment.replies.all %}
                           <div class="media p-3">
-                              <img src="{{ user.image.url }}" alt="{{ user.first_name }}" class="mr-3 mt-3 rounded-circle" style="width:45px;">
+                              <img src="{{ reply.author.image.url }}" alt="{{ reply.author.first_name }}" class="mr-3 mt-3 rounded-circle" style="width:45px;">
                               <div class="media-body">
-                                  <h5>{{reply.author}} <small><i>Posted on {{reply.date_added}}</i></small></h5>
+                                  <h6>{{reply.author|title}} <small><i>Posted on {{reply.date_added}}</i></small></h6>
                                   <p>{{reply.reply_body}}</p>
                               </div>
                           </div>

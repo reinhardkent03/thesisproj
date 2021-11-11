@@ -102,11 +102,11 @@
                         </div>
                     </div>-->
                     <!-- Button trigger modal -->
-                    {% if not user.student_profile.has_bookings %}
+                    {# {% if not user.student_profile.has_bookings %} #}
                     <a type="button" class="btn btn-primary" href="{% url 'booking' tutor_detail.id %}">
                   Book
                 </a>
-                    {% endif %}
+                    {# {% endif %} #}
                 <a type="button" class="btn btn-secondary" href="{% url 'direct:newconversation' tutor_detail.username %}">
                   message
                 </a>

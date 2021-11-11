@@ -119,6 +119,8 @@ class Bookings(models.Model):
                ('0', 'Not sure')
                )
     on_session = models.BooleanField(default=False)
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
     frequency = models.CharField(max_length=10, choices=SESSION, default='0')
     student_id = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
     tutor_id = models.ForeignKey(TutorProfile, on_delete=models.CASCADE)

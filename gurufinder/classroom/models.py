@@ -67,47 +67,6 @@ class Grade(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, default='pending', max_length=10, verbose_name='Status')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def save_lesson_files(instance, filename):
     upload_to = 'Images/'
     ext = filename.split('.')[-1]
@@ -146,6 +105,7 @@ class Lesson(models.Model):
         else:
             super().save(*args, **kwargs)
 
+    #for redirecting purposes
     def get_absolute_url(self):
         return reverse('classroom:lesson_list', kwargs={'slug': self.subject.slug, 'classroom': self.Classroom.slug})
 

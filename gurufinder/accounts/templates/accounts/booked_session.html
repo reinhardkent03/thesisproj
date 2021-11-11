@@ -13,10 +13,10 @@
                 <thead>
                     <tr class="table-dark">
                         <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Link</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Started in</th>
+                        <th scope="col">Ends on</th>
+                        <th scope="col">Classroom</th>
                         <th scope="col">Session</th>
                     </tr>
                 </thead>
@@ -26,9 +26,9 @@
                             {% if room.bookings == session and session.tutor_id.user == user %}
                                 <tr class="table-info">
                                     <th scope="row">{{ forloop.parentloop.counter }}</th>
-                                    <td>{{ session.student_id.user.first_name|capfirst }}</td>
-                                    <td>{{ session.student_id.user.last_name|capfirst }}</td>
-                                    <td>{{ session.student_id.user.email }}</td>
+                                    <td>{{ session.student_id.user.get_full_name|title }}</td>
+                                    <td>{{ session.start_time }}</td>
+                                    <td>{{ session.end_time }}</td>
                                     <td><a href="{% url 'classroom:subject_list' slug=room.slug %}">{{ room.name }}</a></td>
                                     <td><a class="text-danger" href="{% url 'accounts:end_session' session.id %}" type="button">Cancel</a></td>
                                 </tr>
@@ -42,10 +42,10 @@
                 <thead>
                     <tr class="table-dark">
                         <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Link</th>
+                        <th scope="col">Tutor Name</th>
+                        <th scope="col">Started in</th>
+                        <th scope="col">Ends on</th>
+                        <th scope="col">Classroom</th>
                         <th scope="col">Session</th>
                     </tr>
                 </thead>
@@ -55,9 +55,9 @@
                             {% if room.bookings == session and session.student_id.user == user %}
                                 <tr class="table-info">
                                     <th scope="row">{{ forloop.parentloop.counter }}</th>
-                                    <td>{{ session.tutor_id.user.first_name|capfirst }}</td>
-                                    <td>{{ session.tutor_id.user.last_name|capfirst }}</td>
-                                    <td>{{ session.tutor_id.user.email}}</td>
+                                    <td>{{ session.tutor_id.user.get_full_name|title }}</td>
+                                    <td>{{ session.start_time }}</td>
+                                    <td>{{ session.end_time }}</td>
                                     <td><a href="{% url 'classroom:subject_list' slug=room.slug %}">{{ room.name }}</a></td>
                                     <td><a class="text-danger" href="{% url 'accounts:end_session' session.id %}" type="button">Cancel</a></td>
                                 </tr>

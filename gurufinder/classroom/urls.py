@@ -1,11 +1,11 @@
 from django.urls import path
 from . import views
 
-from module.views import CourseModules, NewModule
-from page.views import NewPageModule, PageDetail, MarkPageAsDone
-from quiz.views import NewQuiz, NewQuestion, QuizDetail, TakeQuiz, SubmitAttempt, AttemptDetail
-from assignment.views import NewAssignment, AssignmentDetail, NewSubmission
-from question.views import NewStudentQuestion, Questions, QuestionDetail, MarkAsAnswer, VoteAnswer
+from module.views import course_modules, new_module
+from page.views import new_page_module, page_detail, mark_page_as_done
+from quiz.views import new_quiz, new_question, quiz_detail, take_quiz, submit_attempt, attempt_detail
+from assignment.views import new_assignment, assignment_detail, new_submission
+from question.views import new_student_question, questions, question_detail, mark_as_answer, vote_answer
 
 
 
@@ -14,45 +14,47 @@ app_name = 'classroom'
 urlpatterns = [
     path('', views.ClassroomListView.as_view(), name='classroom_list'),
     path('<slug:slug>/', views.SubjectListView.as_view(), name='subject_list'),
-    path('<slug:slug>/<int:subject_id>/', views.CourseDetail, name='course'),
-    path('<slug:slug>/<int:subject_id>/modules/', CourseModules, name='modules'),
-    path('<slug:slug>/<int:subject_id>/modules/new-module/', NewModule, name='new-module'),
+    path('<slug:slug>/<int:subject_id>/', views.course_detail, name='course'),
+    path('<slug:slug>/<int:subject_id>/modules/', course_modules, name='modules'),
+    path('<slug:slug>/<int:subject_id>/modules/new-module/', new_module, name='new-module'),
     #pages
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/pages/new-page/', NewPageModule, name='new-page'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/pages/<int:page_id>/', PageDetail, name='page-detail'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/pages/<int:page_id>/done/', MarkPageAsDone, name='mark-page-as-done'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/pages/new-page/', new_page_module, name='new-page'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/pages/<int:page_id>/', page_detail, name='page-detail'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/pages/<int:page_id>/done/', mark_page_as_done, name='mark-page-as-done'),
 
     #Quizzes
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/new-quiz', NewQuiz, name='new-quiz'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/new-question', NewQuestion, name='new-question'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/', QuizDetail, name='quiz-detail'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/take', TakeQuiz, name='take-quiz'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/take/submit', SubmitAttempt, name='submit-quiz'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/<int:attempt_id>/results', AttemptDetail, name='attempt-detail'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/new-quiz', new_quiz, name='new-quiz'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/new-question', new_question, name='new-question'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/', quiz_detail, name='quiz-detail'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/take', take_quiz, name='take-quiz'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/take/submit', submit_attempt, name='submit-quiz'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/quiz/<int:quiz_id>/<int:attempt_id>/results', attempt_detail, name='attempt-detail'),
 
     #Assignment
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/assignment/new-assignment', NewAssignment, name='new-assignment'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/assignment/<int:assignment_id>', AssignmentDetail, name='assignment-detail'),
-    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/assignment/<int:assignment_id>/start', NewSubmission, name='start-assignment'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/assignment/new-assignment', new_assignment, name='new-assignment'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/assignment/<int:assignment_id>', assignment_detail, name='assignment-detail'),
+    path('<slug:slug>/<int:subject_id>/modules/<int:module_id>/assignment/<int:assignment_id>/start', new_submission, name='start-assignment'),
 
     #Submissions
-	path('<slug:slug>/<int:subject_id>/submissions', views.Submissions, name='submissions'),
-	path('<slug:slug>/<int:subject_id>/student-submissions', views.StudentSubmissions, name='student-submissions'),
-	path('<slug:slug>/<int:subject_id>/submissions/<int:grade_id>/grade', views.GradeSubmission, name='grade-submission'),
+	path('<slug:slug>/<int:subject_id>/submissions', views.submissions, name='submissions'),
+	path('<slug:slug>/<int:subject_id>/student-submissions', views.student_submissions, name='student-submissions'),
+	path('<slug:slug>/<int:subject_id>/submissions/<int:grade_id>/grade', views.grade_submission, name='grade-submission'),
 
     #Questions
-    path('<slug:slug>/<int:subject_id>/questions', Questions, name='questions'),
-    path('<slug:slug>/<int:subject_id>/questions/new-question', NewStudentQuestion, name='new-student-question'),
-    path('<slug:slug>/<int:subject_id>/questions/<int:question_id>', QuestionDetail, name='question-detail'),
-    path('<slug:slug>/<int:subject_id>/questions/<int:question_id>/vote', VoteAnswer, name='vote-answer'),
-    path('<slug:slug>/<int:subject_id>/questions/<int:question_id>/<int:answer_id>/mark-as-answer', MarkAsAnswer, name='mark-as-answer'),
+    path('<slug:slug>/<int:subject_id>/questions', questions, name='questions'),
+    path('<slug:slug>/<int:subject_id>/questions/new-question', new_student_question, name='new-student-question'),
+    path('<slug:slug>/<int:subject_id>/questions/<int:question_id>', question_detail, name='question-detail'),
+    path('<slug:slug>/<int:subject_id>/questions/<int:question_id>/vote', vote_answer, name='vote-answer'),
+    path('<slug:slug>/<int:subject_id>/questions/<int:question_id>/<int:answer_id>/mark-as-answer', mark_as_answer, name='mark-as-answer'),
 
-
-    #path('<str:classroom>/<slug:slug>/', views.LessonListView.as_view(), name='lesson_list'),
-    path('<str:classroom>/<str:slug>/create/', views.LessonCreateView.as_view(), name='lesson_create'),
-    path('<str:classroom>/<str:subject>/<slug:slug>/', views.LessonDetailView.as_view(), name='lesson_detail'),
-    path('<str:classroom>/<str:subject>/<slug:slug>/<int:lesson_id>/', views.lesson_completed, name='lesson_complete'),
+    #extra content
+    path('<slug:slug>/<int:subject_id>/extra-content', views.LessonListView.as_view(), name='lesson_list'),
+    path('<slug:slug>/<int:subject_id>/extra-content/create', views.LessonCreateView.as_view(), name='lesson_create'),
+    path('<str:classroom>/<str:subject>/extra-content/<slug:slug>/', views.LessonDetailView.as_view(), name='lesson_detail'),
+    # path('<str:classroom>/<str:subject>/extra-content/<slug:slug>/<int:lesson_id>/', views.lesson_completed, name='lesson_complete'),
     # path('<str:classroom>/<str:subject>/<slug:slug>/<int:id>/', views.lesson_not_completed, name='lesson_not_completed'),
-    path('<str:classroom>/<str:subject>/<slug:slug>/update/', views.LessonUpdateView.as_view(), name='lesson_update'),
-    path('<str:classroom>/<str:subject>/<slug:slug>/delete/', views.LessonDeleteView.as_view(), name='lesson_delete'),
+    path('<str:classroom>/<str:subject>/extra-content/<slug:slug>/update/', views.LessonUpdateView.as_view(), name='lesson_update'),
+    path('<str:classroom>/<str:subject>/extra-content/<slug:slug>/delete/', views.LessonDeleteView.as_view(), name='lesson_delete'),
+    path('<str:classroom>/<int:subject_id>/extra-content/<int:lesson_id>/mark-as-done/', views.mark_lesson_as_done,name='mark-lesson-as-done'),
+
 ]
