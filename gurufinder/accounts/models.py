@@ -22,12 +22,12 @@ def path_and_rename(instance, filename):
 class User(AbstractUser):
     is_student = models.BooleanField(default=False)
     is_tutor = models.BooleanField(default=False)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    phone_number = models.CharField(max_length=11, blank=False)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(max_length=100, blank=True)
+    phone_number = models.CharField(max_length=11, blank=True)
     current_address = models.CharField(max_length=100)
-    image = models.ImageField(default='default_pic.jpg', upload_to=path_and_rename, verbose_name='Profile Pictures')
+    image = models.ImageField(default='default_pic.jpg', upload_to=path_and_rename, verbose_name='Profile Pictures', blank=True)
 
     def __str__(self):
         return f'{self.username}'

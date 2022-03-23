@@ -43,6 +43,33 @@ class TutorProfileForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'rows': 4, 'cols': 70}),
         }
 
+class UserUpdateForm(forms.ModelForm):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+
+        self.fields['first_name'].initial = user.first_name
+        self.fields['last_name'].initial = user.last_name
+        self.fields['email'].initial = user.email
+        self.fields['phone_number'].initial = user.phone_number
+        self.fields['current_address'].initial = user.current_address
+        self.fields['image'].initial = user.image
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'current_address', 'image']
+
+    # def __init__(self, *args, **kwargs):
+    #     super(UserUpdateForm, self).__init__(*args, **kwargs)
+    #     self.fields['first_name'].required = False
+    #     self.fields['last_name'].required = False
+    #     self.fields['email'].required = False
+    #     self.fields['phone_number'].required = False
+    #     self.fields['current_address'].required = False
+
+
+
+
 
 class ApplicationForm(forms.ModelForm):
     class Meta:

@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect,  get_object_or_404
 from datetime import datetime, timedelta
-from .forms import StudentSignUpForm, TutorSignUpForm, ApplicationForm, TutorProfileForm, BookingsForm, DenyRequestForm #TutorUpdateProfileForm
+from .forms import StudentSignUpForm, TutorSignUpForm, ApplicationForm, TutorProfileForm, BookingsForm, DenyRequestForm, UserUpdateForm #TutorUpdateProfileForm
 from django.contrib import messages, admin
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
@@ -465,9 +465,17 @@ def accept_request(request, id):
         session.on_session = True
         session.start_time = datetime.now()
         session.end_time = datetime.now()
-        tutor.tutor_profile.students.append(student.username) #assign as one of the tutors student
+        print(tutor)
+
+        if tutor.tutor_profile.students == None:
+            tutor.tutor_profile.students = [student.username]
+            tutor.save()
+        elif tutor.tutor_profile.students and student.username not in tutor.tutor_profile.students :
+            tutor.tutor_profile.students.append(student.username)
+            tutor.save()
+            #assign as one of the tutors student
+
         session.save()
-        tutor.save()
         student.save()
 
         if int(session.frequency[0]) <= 0:
@@ -608,18 +616,65 @@ class TutorDetailView(LoginRequiredMixin,DetailView):
     template_name = 'accounts/tutor_detail_view.html'
     context_object_name = 'tutor_detail'
 
+# class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+#     model = User
+#     form_class = UserUpdateForm
+#     second_form_class = TutorProfileForm
+#     template_name = 'accounts/profile_update.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+#
+#         if 'form' not in context:
+#             context['form'] = self.form_class(self.request.GET)
+#         if 'form2' not in context:
+#             context['form2'] = self.second_form_class(self.request.GET)
+#         return context
+#
+#     def get(self, request, *args, **kwargs):
+#         super(ProfileUpdateView, self).get(request, *args, **kwargs)
+#         form = self.form_class
+#         form2 = self.second_form_class
+#         return self.render_to_response(self.get_context_data(object=self.object, form=form, form2=form2))
+#
+#     def get_success_url(self):
+#         self.object = self.get_object()
+#         return reverse_lazy('accounts:profile')
+#
+#     def post(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         form = self.form_class(request.POST)
+#         form2 = self.second_form_class(request.POST)
+#
+#         if form.is_valid() and form2.is_valid():
+#             return HttpResponseRedirect(self.get_success_url())
+#         else:
+#             return self.render_to_response(self.get_context_data(form=form, form2=form2))
+#
+#     def get_object(self, *args, **kwargs):
+#         return User.objects.get(username=self.kwargs.get('username'))
+#
+#     def get_success_url(self):
+#         self.object = self.get_object()
+#         return reverse_lazy('accounts:profile_update', self.request.user.username)
+
 
 class ProfileUpdateView(LoginRequiredMixin,UpdateView):
-    fields = ['first_name', 'last_name', 'email', 'phone_number', 'current_address', 'image']
-    model = User
-    template_name = 'accounts/profile_update.html'
+     model = User
+     form_class = UserUpdateForm
+     template_name = 'accounts/profile_update.html'
 
-    def get_object(self, *args, **kwargs):
-        return User.objects.get(username=self.kwargs.get('username'))
+     def get_object(self, *args, **kwargs):
+         return User.objects.get(username=self.kwargs.get('username'))
 
-    def get_success_url(self):
-        self.object = self.get_object()
-        return reverse_lazy('accounts:profile_update', self.request.user.username)
+     def get_success_url(self):
+         self.object = self.get_object()
+         return reverse_lazy('accounts:profile_update', self.request.user.username)
+
+     def get_form_kwargs(self):
+         form = super().get_form_kwargs()
+         form['user'] = self.request.user
+         return form
 
 
 @admin.register(Application)
